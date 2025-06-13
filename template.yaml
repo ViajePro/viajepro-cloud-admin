@@ -1,0 +1,105 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: |
+  viajepro-cloud-admin - Módulo administrativo para ViajeProCloud
+
+Parameters:
+  Stage:
+    Type: String
+    Description: Nombre del entorno (dev, stage, prod)
+    Default: dev
+
+Globals:
+  Function:
+    Timeout: 30
+    Runtime: nodejs22.x
+    Architectures:
+      - x86_64
+    Environment:
+      Variables:
+        STAGE: !Ref Stage
+    LoggingConfig:
+      LogGroup: !Sub "/aws/lambda/viajepro-cloud-admin-${Stage}"
+      LogFormat: JSON
+
+Resources:
+  # --- API Gateway ---
+  AdminApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Ref Stage
+      Cors:
+        AllowMethods: "'*'"
+        AllowHeaders: "'Content-Type,Authorization'"
+        AllowOrigin: "'*'"
+      Auth:
+        DefaultAuthorizer: CognitoAuthorizer
+        Authorizers:
+          CognitoAuthorizer:
+            UserPoolArn: !ImportValue 
+              Fn::Sub: "viajepro-cloud-resources-${Stage}-UserPoolArn"
+
+  # --- Lambda Function for Finance Management ---
+  FinanceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub viajepro-cloud-admin-finance-${Stage}
+      CodeUri: ./
+      Handler: src/admin/app.lambdaHandler
+      Environment:
+        Variables:
+          TABLE_NAME: !ImportValue 
+            Fn::Sub: "viajepro-cloud-${Stage}-RemisDataTableName"
+          STAGE: !Ref Stage
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:PutItem
+                - dynamodb:GetItem
+                - dynamodb:Query
+                - dynamodb:Scan
+                - dynamodb:UpdateItem
+              Resource: 
+                - !ImportValue 
+                  Fn::Sub: "viajepro-cloud-${Stage}-RemisDataTableArn"
+                - Fn::Sub:
+                    - "${TableArn}/index/*"
+                    - TableArn: !ImportValue 
+                        Fn::Sub: "viajepro-cloud-${Stage}-RemisDataTableArn"
+      Events:
+        GetIncomeReport:
+          Type: Api
+          Properties:
+            RestApiId: !Ref AdminApi
+            Path: /finance/income-report
+            Method: get
+        GetDriverDebts:
+          Type: Api
+          Properties:
+            RestApiId: !Ref AdminApi
+            Path: /finance/driver-debts
+            Method: get
+        GetDriverDebt:
+          Type: Api
+          Properties:
+            RestApiId: !Ref AdminApi
+            Path: /finance/driver-debts/{driverId}
+            Method: get
+        RegisterDriverPayment:
+          Type: Api
+          Properties:
+            RestApiId: !Ref AdminApi
+            Path: /finance/driver-payments
+            Method: post
+
+Outputs:
+  AdminApiUrl:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub "https://${AdminApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}/"
+  FinanceFunctionArn:
+    Description: "ARN de la función Lambda de gestión financiera"
+    Value: !GetAtt FinanceFunction.Arn
+    Export:
+      Name: !Sub "viajepro-cloud-admin-${Stage}-FinanceFunctionArn"

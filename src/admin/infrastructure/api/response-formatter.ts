@@ -1,0 +1,38 @@
+import { APIGatewayProxyResult } from 'aws-lambda';
+import { config } from '../../config';
+
+export class ResponseFormatter {
+  static success<T>(data: T, statusCode: number = 200): APIGatewayProxyResult {
+    return {
+      statusCode,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type,Authorization'
+      },
+      body: JSON.stringify(data)
+    };
+  }
+
+  static error(message: string, statusCode: number = 400, error?: unknown): APIGatewayProxyResult {
+    const response: any = {
+      message
+    };
+
+    // Incluir detalles del error solo en entorno local o de desarrollo
+    if (config.isLocal && error instanceof Error) {
+      response.error = error.message;
+      response.stack = error.stack;
+    }
+
+    return {
+      statusCode,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type,Authorization'
+      },
+      body: JSON.stringify(response)
+    };
+  }
+}
