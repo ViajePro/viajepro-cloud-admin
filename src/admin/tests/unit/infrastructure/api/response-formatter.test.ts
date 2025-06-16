@@ -29,7 +29,9 @@ describe('ResponseFormatter', () => {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Content-Type,Authorization'
       });
-      expect(JSON.parse(response.body)).toEqual(data);
+      const responseBody = JSON.parse(response.body);
+      expect(responseBody.success).toBe(true);
+      expect(responseBody.data).toEqual(data);
     });
     
     it('debería permitir especificar un código de estado personalizado', () => {
@@ -42,7 +44,9 @@ describe('ResponseFormatter', () => {
       
       // Assert
       expect(response.statusCode).toBe(statusCode);
-      expect(JSON.parse(response.body)).toEqual(data);
+      const responseBody = JSON.parse(response.body);
+      expect(responseBody.success).toBe(true);
+      expect(responseBody.data).toEqual(data);
     });
     
     it('debería manejar datos primitivos', () => {
@@ -54,7 +58,9 @@ describe('ResponseFormatter', () => {
       
       // Assert
       expect(response.statusCode).toBe(200);
-      expect(JSON.parse(response.body)).toBe(data);
+      const responseBody = JSON.parse(response.body);
+      expect(responseBody.success).toBe(true);
+      expect(responseBody.data).toBe(data);
     });
     
     it('debería manejar arrays', () => {
@@ -66,7 +72,9 @@ describe('ResponseFormatter', () => {
       
       // Assert
       expect(response.statusCode).toBe(200);
-      expect(JSON.parse(response.body)).toEqual(data);
+      const responseBody = JSON.parse(response.body);
+      expect(responseBody.success).toBe(true);
+      expect(responseBody.data).toEqual(data);
     });
   });
   
@@ -85,7 +93,9 @@ describe('ResponseFormatter', () => {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Content-Type,Authorization'
       });
-      expect(JSON.parse(response.body)).toEqual({ message });
+      const responseBody = JSON.parse(response.body);
+      expect(responseBody.success).toBe(false);
+      expect(responseBody.error).toBe(message);
     });
     
     it('debería permitir especificar un código de estado personalizado', () => {
@@ -98,7 +108,9 @@ describe('ResponseFormatter', () => {
       
       // Assert
       expect(response.statusCode).toBe(statusCode);
-      expect(JSON.parse(response.body)).toEqual({ message });
+      const responseBody = JSON.parse(response.body);
+      expect(responseBody.success).toBe(false);
+      expect(responseBody.error).toBe(message);
     });
     
     it('debería incluir detalles del error en entorno local', () => {
@@ -116,8 +128,9 @@ describe('ResponseFormatter', () => {
       // Assert
       expect(response.statusCode).toBe(500);
       const body = JSON.parse(response.body);
-      expect(body.message).toBe(message);
-      expect(body.error).toBe('Detalles del error');
+      expect(body.success).toBe(false);
+      expect(body.error).toBe(message);
+      expect(body.details).toBe('Detalles del error');
       expect(body.stack).toBe('Stack simulado');
     });
     
@@ -135,8 +148,9 @@ describe('ResponseFormatter', () => {
       // Assert
       expect(response.statusCode).toBe(500);
       const body = JSON.parse(response.body);
-      expect(body.message).toBe(message);
-      expect(body.error).toBeUndefined();
+      expect(body.success).toBe(false);
+      expect(body.error).toBe(message);
+      expect(body.details).toBeUndefined();
       expect(body.stack).toBeUndefined();
     });
     
@@ -154,9 +168,8 @@ describe('ResponseFormatter', () => {
       // Assert
       expect(response.statusCode).toBe(500);
       const body = JSON.parse(response.body);
-      expect(body.message).toBe(message);
-      expect(body.error).toBeUndefined();
-      expect(body.stack).toBeUndefined();
+      expect(body.success).toBe(false);
+      expect(body.error).toBe(message);
     });
   });
 });

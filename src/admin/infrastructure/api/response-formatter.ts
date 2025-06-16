@@ -10,18 +10,22 @@ export class ResponseFormatter {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Content-Type,Authorization'
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify({
+        success: true,
+        data
+      })
     };
   }
 
   static error(message: string, statusCode: number = 400, error?: unknown): APIGatewayProxyResult {
     const response: any = {
-      message
+      success: false,
+      error: message
     };
 
     // Incluir detalles del error solo en entorno local o de desarrollo
     if (config.isLocal && error instanceof Error) {
-      response.error = error.message;
+      response.details = error.message;
       response.stack = error.stack;
     }
 

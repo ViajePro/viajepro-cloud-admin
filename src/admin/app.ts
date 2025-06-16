@@ -2,8 +2,10 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { GetIncomeReportUseCase } from './application/usecases/get-income-report-use-case';
 import { GetDriverDebtsUseCase } from './application/usecases/get-driver-debts-use-case';
 import { RegisterDriverPaymentUseCase } from './application/usecases/register-driver-payment-use-case';
-import { FinanceController } from './infrastructure/controllers/finance-controller';
-import { financeRepository, driverRepository } from './infrastructure/repositories';
+import { GetTravelCostConfigUseCase } from './application/usecases/get-travel-cost-config-use-case';
+import { UpdateTravelCostConfigUseCase } from './application/usecases/update-travel-cost-config-use-case';
+import { financeController } from './infrastructure/controllers/finance-controller';
+import { configController } from './infrastructure/controllers/config-controller';
 import { LoggerFactory } from './infrastructure/logging/LoggerFactory';
 import { config } from './config';
 import { ResponseFormatter } from './infrastructure/api/response-formatter';
@@ -17,18 +19,6 @@ appLogger.info('Inicializando aplicación', {
   isLocal: config.isLocal,
   tableName: config.tableName
 });
-
-// Inicializar casos de uso
-const getIncomeReportUseCase = new GetIncomeReportUseCase(financeRepository);
-const getDriverDebtsUseCase = new GetDriverDebtsUseCase(financeRepository, driverRepository);
-const registerDriverPaymentUseCase = new RegisterDriverPaymentUseCase(financeRepository);
-
-// Inicializar controlador
-const financeController = new FinanceController(
-  getIncomeReportUseCase,
-  getDriverDebtsUseCase,
-  registerDriverPaymentUseCase
-);
 
 // Handler base de Lambda
 const baseHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
@@ -52,8 +42,14 @@ const baseHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxy
     };
   }
   
-  // Procesar la solicitud con el controlador
-  return await financeController.handleRequest(event);
+  // Determinar qué controlador usar según la ruta
+  if (event.path.startsWith('/config')) {
+    appLogger.debug('Redirigiendo a ConfigController');
+    return await configController.handleRequest(event);
+  } else {
+    appLogger.debug('Redirigiendo a FinanceController');
+    return await financeController.handleRequest(event);
+  }
 };
 
 // Aplicar middleware de manejo de errores

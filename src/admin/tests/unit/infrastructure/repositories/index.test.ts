@@ -40,10 +40,11 @@ describe('Repositories Index', () => {
   
   it('debería exportar instancias de repositorios', () => {
     // Act
-    const repositories = require('../../../../infrastructure/repositories');
+    const { financeRepository, driverRepository, configRepository } = require('../../../../infrastructure/repositories');
     
     // Assert
-    expect(repositories.financeRepository).toBeDefined();
-    expect(repositories.driverRepository).toBeDefined();
+    expect(financeRepository).toBeDefined();
+    expect(driverRepository).toBeDefined();
+    expect(configRepository).toBeDefined();
   });
 });

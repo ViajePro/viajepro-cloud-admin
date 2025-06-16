@@ -1,45 +1,35 @@
-import AWS from 'aws-sdk';
-import { DynamoDBFinanceRepository } from './dynamodb-finance-repository';
-import { DynamoDBDriverRepository } from './driver-repository';
+import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { config } from '../../config';
 import { LoggerFactory } from '../logging/LoggerFactory';
+import { DynamoDBFinanceRepository } from './dynamodb-finance-repository';
+import { DynamoDBConfigRepository } from './dynamodb-config-repository';
+import { DynamoDBDriverRepository } from './driver-repository';
 
-// Crear loggers
-const repositoryLogger = LoggerFactory.getLogger('repository');
-
-// Configuración de DynamoDB
-const getDocumentClient = () => {
-  const options: AWS.DynamoDB.ClientConfiguration = {
-    region: config.region
-  };
-
-  // Para desarrollo local
+// Crear instancia de DynamoDB DocumentClient
+const createDocClient = (): DocumentClient => {
   if (config.isLocal) {
-    options.endpoint = 'http://localhost:8000';
-    repositoryLogger.info('Usando endpoint local para DynamoDB', { endpoint: options.endpoint });
+    return new DocumentClient({
+      region: config.region,
+      endpoint: 'http://localhost:8000'
+    });
   }
-
-  return new AWS.DynamoDB.DocumentClient(options);
+  return new DocumentClient({ region: config.region });
 };
 
-// Crear instancia del cliente DynamoDB
-const documentClient = getDocumentClient();
-
-repositoryLogger.info('Inicializando repositorios', { 
-  tableName: config.tableName,
-  stage: config.stage,
-  isLocal: config.isLocal
-});
+// Crear instancias de repositorios
+const docClient = createDocClient();
+const logger = LoggerFactory.getLogger('repositories');
 
 // Exportar instancias de repositorios
-export const financeRepository = new DynamoDBFinanceRepository(
-  documentClient,
-  config.tableName,
-  LoggerFactory.getLogger('financeRepository')
-);
+export const financeRepository = new DynamoDBFinanceRepository(docClient, config.tableName, logger);
+export const configRepository = new DynamoDBConfigRepository(docClient, config.tableName, logger);
+export const driverRepository = new DynamoDBDriverRepository(docClient, config.tableName, logger);
 
-export const driverRepository = new DynamoDBDriverRepository(
-  documentClient,
-  config.tableName,
-  LoggerFactory.getLogger('driverRepository')
-);
+// Función para crear repositorios (para compatibilidad)
+export const createRepositories = () => {
+  return {
+    financeRepository,
+    configRepository,
+    driverRepository
+  };
+};

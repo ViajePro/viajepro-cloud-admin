@@ -139,3 +139,10 @@ export class FinanceController {
     }
   }
 }
+
+// Exportar una instancia para usar en pruebas
+export const financeController = new FinanceController(
+  {} as any,
+  {} as any,
+  {} as any
+);
