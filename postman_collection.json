@@ -1,0 +1,197 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "ViajeProCloud Admin API",
+    "description": "Colección para probar la API de administración de ViajeProCloud",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Finanzas",
+      "item": [
+        {
+          "name": "Obtener Reporte de Ingresos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/finance/income-report?startDate=2023-01-01&endDate=2023-12-31",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "finance",
+                "income-report"
+              ],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "2023-01-01"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2023-12-31"
+                }
+              ]
+            },
+            "description": "Obtiene un reporte de ingresos para un período específico"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Deudas de Choferes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/finance/driver-debts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "finance",
+                "driver-debts"
+              ]
+            },
+            "description": "Obtiene la lista de todos los choferes con sus deudas acumuladas"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Deuda de Chofer Específico",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/finance/driver-debts/{{driverId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "finance",
+                "driver-debts",
+                "{{driverId}}"
+              ]
+            },
+            "description": "Obtiene la deuda acumulada de un chofer específico"
+          },
+          "response": []
+        },
+        {
+          "name": "Registrar Pago de Chofer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"driverId\": \"{{driverId}}\",\n  \"amount\": 1000.50,\n  \"description\": \"Pago de comisiones semana 32\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/finance/driver-payments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "finance",
+                "driver-payments"
+              ]
+            },
+            "description": "Registra un pago realizado por un chofer para saldar parcial o totalmente su deuda"
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints relacionados con la gestión financiera"
+    },
+    {
+      "name": "Configuración",
+      "item": [
+        {
+          "name": "Obtener Configuración de Costos de Viaje",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/config/travel-cost",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "config",
+                "travel-cost"
+              ]
+            },
+            "description": "Obtiene la configuración actual para el cálculo de costos de viaje y comisiones"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Configuración de Costos de Viaje",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"baseFare\": 100,\n  \"perKilometerRate\": 10,\n  \"driverCommissionPercentage\": 80\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/config/travel-cost",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "config",
+                "travel-cost"
+              ]
+            },
+            "description": "Actualiza la configuración para el cálculo de costos de viaje y comisiones"
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints relacionados con la configuración del sistema"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.viajepro.com",
+      "type": "string"
+    },
+    {
+      "key": "driverId",
+      "value": "00000000-0000-0000-0000-000000000000",
+      "type": "string"
+    }
+  ]
+}
