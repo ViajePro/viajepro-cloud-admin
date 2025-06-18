@@ -49,7 +49,6 @@ desktop.ini
 *~
 
 # Archivos de AWS
-samconfig.toml
 .aws/
 aws-exports.js
 

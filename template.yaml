@@ -44,12 +44,12 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: !Sub viajepro-cloud-admin-finance-${Stage}
-      CodeUri: ./
-      Handler: src/admin/app.lambdaHandler
+      CodeUri: ./dist
+      Handler: admin/app.lambdaHandler
       Environment:
         Variables:
           TABLE_NAME: !ImportValue 
-            Fn::Sub: "viajepro-cloud-${Stage}-RemisDataTableName"
+            Fn::Sub: "viajepro-cloud-${Stage}-RemisDataTableArn"
           STAGE: !Ref Stage
       Policies:
         - Version: '2012-10-17'

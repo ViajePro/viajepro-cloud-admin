@@ -1,0 +1,15 @@
+src/
+tests/
+*.ts
+tsconfig.json
+jest.config.js
+.git*
+*.md
+*.yml
+*.yaml
+esbuild.config.js
+build.js
+samconfig.toml
+node_modules/
+coverage/
+.aws-sam/
