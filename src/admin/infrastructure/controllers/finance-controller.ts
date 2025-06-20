@@ -140,9 +140,17 @@ export class FinanceController {
   }
 }
 
-// Exportar una instancia para usar en pruebas
+// Importar repositorios e instanciar casos de uso
+import { financeRepository, driverRepository } from '../repositories';
+
+// Crear instancias de casos de uso
+const getIncomeReportUseCase = new GetIncomeReportUseCase(financeRepository);
+const getDriverDebtsUseCase = new GetDriverDebtsUseCase(financeRepository, driverRepository);
+const registerDriverPaymentUseCase = new RegisterDriverPaymentUseCase(financeRepository);
+
+// Exportar instancia del controlador con casos de uso reales
 export const financeController = new FinanceController(
-  {} as any,
-  {} as any,
-  {} as any
+  getIncomeReportUseCase,
+  getDriverDebtsUseCase,
+  registerDriverPaymentUseCase
 );

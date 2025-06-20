@@ -91,8 +91,15 @@ export class ConfigController {
   }
 }
 
-// Exportar una instancia para usar en pruebas
+// Importar repositorios e instanciar casos de uso
+import { configRepository } from '../repositories';
+
+// Crear instancias de casos de uso
+const getTravelCostConfigUseCase = new GetTravelCostConfigUseCase(configRepository);
+const updateTravelCostConfigUseCase = new UpdateTravelCostConfigUseCase(configRepository);
+
+// Exportar instancia del controlador con casos de uso reales
 export const configController = new ConfigController(
-  {} as any,
-  {} as any
+  getTravelCostConfigUseCase,
+  updateTravelCostConfigUseCase
 );

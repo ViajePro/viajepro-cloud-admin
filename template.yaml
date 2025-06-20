@@ -93,6 +93,18 @@ Resources:
             RestApiId: !Ref AdminApi
             Path: /finance/driver-payments
             Method: post
+        UpdateTravelCostConfig:
+          Type: Api
+          Properties:
+            RestApiId: !Ref AdminApi
+            Path: /config/travel-cost
+            Method: put
+        GetTravelCostConfig:
+          Type: Api
+          Properties:
+            RestApiId: !Ref AdminApi
+            Path: /config/travel-cost
+            Method: get
 
 Outputs:
   AdminApiUrl:
