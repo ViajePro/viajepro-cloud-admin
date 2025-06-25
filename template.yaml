@@ -105,11 +105,19 @@ Resources:
             RestApiId: !Ref AdminApi
             Path: /config/travel-cost
             Method: get
+        RegisterTravelDebt:
+          Type: Api
+          Properties:
+            RestApiId: !Ref AdminApi
+            Path: /travel-debt
+            Method: post
 
 Outputs:
   AdminApiUrl:
     Description: "API Gateway endpoint URL"
     Value: !Sub "https://${AdminApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}/"
+    Export:
+      Name: !Sub "viajepro-cloud-admin-${Stage}-AdminApiUrl"
   FinanceFunctionArn:
     Description: "ARN de la función Lambda de gestión financiera"
     Value: !GetAtt FinanceFunction.Arn

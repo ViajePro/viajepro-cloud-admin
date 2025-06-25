@@ -1,4 +1,4 @@
-import { DriverDebt, DriverPayment, IncomeReport, TravelIncome } from "../../domain/finance";
+import { DriverDebt, DriverPayment, IncomeReport, TravelIncome, TravelDebtRecord } from "../../domain/finance";
 
 export interface FinanceRepository {
   /**
@@ -25,4 +25,9 @@ export interface FinanceRepository {
    * Actualiza la deuda de un chofer después de un pago
    */
   updateDriverDebt(driverId: string, amountPaid: number): Promise<DriverDebt>;
+  
+  /**
+   * Registra una deuda por viaje finalizado
+   */
+  registerTravelDebt(debtRecord: TravelDebtRecord): Promise<TravelDebtRecord>;
 }

@@ -32,7 +32,8 @@ describe('RegisterDriverPaymentUseCase', () => {
       getAllDriverDebts: jest.fn(),
       getDriverDebt: jest.fn(),
       registerDriverPayment: jest.fn(),
-      updateDriverDebt: jest.fn()
+      updateDriverDebt: jest.fn(),
+      registerTravelDebt: jest.fn()
     } as jest.Mocked<FinanceRepository>;
     
     useCase = new RegisterDriverPaymentUseCase(mockFinanceRepository);

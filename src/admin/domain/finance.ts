@@ -59,3 +59,32 @@ export interface DriverDebtSummary {
   lastPaymentDate?: string;
   lastPaymentAmount?: number;
 }
+
+export const DebtRecordSchema = z.object({
+  registroId: z.string().uuid(),
+  choferId: z.string().uuid(),
+  fechaHora: z.date(),
+  monto: z.number(), // positivo para deuda, negativo para pago
+  descripcion: z.string()
+});
+
+export type DebtRecord = z.infer<typeof DebtRecordSchema>;
+
+export enum PaymentMethodType {
+  CASH = 'cash',
+  CARD = 'card',
+  TRANSFER = 'transfer'
+}
+
+export const TravelDebtRecordSchema = z.object({
+  recordId: z.string().uuid(),
+  travelId: z.string().uuid(),
+  driverId: z.string().uuid(),
+  amount: z.number().positive(),
+  companyCommission: z.number(),
+  paymentMethod: z.nativeEnum(PaymentMethodType),
+  createdAt: z.date(),
+  description: z.string().optional()
+});
+
+export type TravelDebtRecord = z.infer<typeof TravelDebtRecordSchema>;

@@ -26,7 +26,8 @@ describe('GetIncomeReportUseCase', () => {
       getAllDriverDebts: jest.fn(),
       getDriverDebt: jest.fn(),
       registerDriverPayment: jest.fn(),
-      updateDriverDebt: jest.fn()
+      updateDriverDebt: jest.fn(),
+      registerTravelDebt: jest.fn()
     } as jest.Mocked<FinanceRepository>;
     
     useCase = new GetIncomeReportUseCase(mockFinanceRepository);

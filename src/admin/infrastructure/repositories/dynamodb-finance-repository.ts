@@ -1,5 +1,5 @@
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
-import { DriverDebt, DriverPayment, IncomeReport, IncomeReportItem, TravelIncome } from '../../domain/finance';
+import { DriverDebt, DriverPayment, IncomeReport, IncomeReportItem, TravelIncome, TravelDebtRecord } from '../../domain/finance';
 import { FinanceRepository } from '../../application/ports/finance-repository';
 import { Logger } from '../logging/LoggerFactory';
 
@@ -253,6 +253,43 @@ export class DynamoDBFinanceRepository implements FinanceRepository {
       };
     } catch (error: any) {
       this.logger.error('Error al actualizar deuda del chofer', error);
+      throw error;
+    }
+  }
+
+  async registerTravelDebt(debtRecord: TravelDebtRecord): Promise<TravelDebtRecord> {
+    this.logger.info('Registrando deuda por viaje', { recordId: debtRecord.recordId });
+
+    try {
+      const item = {
+        PK: `TRAVEL_DEBT#${debtRecord.travelId}`,
+        SK: `DRIVER#${debtRecord.driverId}`,
+        GSI1_PK: `DRIVER_DEBT#${debtRecord.driverId}`,
+        GSI1_SK: debtRecord.createdAt.toISOString(),
+        recordId: debtRecord.recordId,
+        travelId: debtRecord.travelId,
+        driverId: debtRecord.driverId,
+        amount: debtRecord.amount,
+        companyCommission: debtRecord.companyCommission,
+        paymentMethod: debtRecord.paymentMethod,
+        createdAt: debtRecord.createdAt.toISOString(),
+        description: debtRecord.description || `Deuda por viaje ${debtRecord.travelId}`,
+        type: 'TRAVEL_DEBT'
+      };
+
+      await this.docClient.put({
+        TableName: this.tableName,
+        Item: item
+      }).promise();
+
+      // Actualizar la deuda total del conductor
+      // Nota: amountPaid negativo significa que aumenta la deuda
+      await this.updateDriverDebt(debtRecord.driverId, -debtRecord.amount);
+
+      this.logger.info('Deuda por viaje registrada correctamente', { recordId: debtRecord.recordId });
+      return debtRecord;
+    } catch (error: any) {
+      this.logger.error('Error al registrar deuda por viaje', error);
       throw error;
     }
   }

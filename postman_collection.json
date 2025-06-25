@@ -104,6 +104,33 @@
             "description": "Registra un pago realizado por un chofer para saldar parcial o totalmente su deuda"
           },
           "response": []
+        },
+        {
+          "name": "Registrar Deuda por Viaje",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"travelId\": \"{{travelId}}\",\n  \"driverId\": \"{{driverId}}\",\n  \"amount\": 500.00,\n  \"companyCommission\": 100.00,\n  \"paymentMethod\": \"CASH\",\n  \"description\": \"Deuda por viaje {{travelId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/travel-debt",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "travel-debt"
+              ]
+            },
+            "description": "Registra una deuda generada por un viaje completado"
+          },
+          "response": []
         }
       ],
       "description": "Endpoints relacionados con la gestión financiera"
@@ -190,6 +217,11 @@
     },
     {
       "key": "driverId",
+      "value": "00000000-0000-0000-0000-000000000000",
+      "type": "string"
+    },
+    {
+      "key": "travelId",
       "value": "00000000-0000-0000-0000-000000000000",
       "type": "string"
     }

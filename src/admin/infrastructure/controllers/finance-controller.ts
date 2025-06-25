@@ -7,13 +7,20 @@ import { ResponseFormatter } from '../api/response-formatter';
 
 export class FinanceController {
   private logger: Logger;
+  private financeRepository: any;
 
   constructor(
     private getIncomeReportUseCase: GetIncomeReportUseCase,
     private getDriverDebtsUseCase: GetDriverDebtsUseCase,
-    private registerDriverPaymentUseCase: RegisterDriverPaymentUseCase
+    private registerDriverPaymentUseCase: RegisterDriverPaymentUseCase,
+    financeRepository: any
   ) {
     this.logger = LoggerFactory.getLogger('financeController');
+    this.financeRepository = financeRepository;
+  }
+  
+  getFinanceRepository() {
+    return this.financeRepository;
   }
 
   async handleRequest(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
@@ -152,5 +159,6 @@ const registerDriverPaymentUseCase = new RegisterDriverPaymentUseCase(financeRep
 export const financeController = new FinanceController(
   getIncomeReportUseCase,
   getDriverDebtsUseCase,
-  registerDriverPaymentUseCase
+  registerDriverPaymentUseCase,
+  financeRepository
 );

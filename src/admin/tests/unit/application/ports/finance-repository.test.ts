@@ -4,7 +4,8 @@ import {
   DriverPayment, 
   IncomeReport, 
   TravelIncome, 
-  PaymentStatus 
+  PaymentStatus,
+  TravelDebtRecord 
 } from '../../../../domain/finance';
 
 // Clase mock para implementar la interfaz FinanceRepository
@@ -12,6 +13,7 @@ class MockFinanceRepository implements FinanceRepository {
   private incomeReports: Map<string, IncomeReport> = new Map();
   private driverDebts: Map<string, DriverDebt> = new Map();
   private driverPayments: DriverPayment[] = [];
+  private travelDebtRecords: TravelDebtRecord[] = [];
 
   constructor() {
     // Inicializar con algunos datos de prueba
@@ -107,6 +109,11 @@ class MockFinanceRepository implements FinanceRepository {
     
     this.driverDebts.set(driverId, updatedDebt);
     return updatedDebt;
+  }
+
+  async registerTravelDebt(debtRecord: TravelDebtRecord): Promise<TravelDebtRecord> {
+    this.travelDebtRecords.push(debtRecord);
+    return debtRecord;
   }
 }
 
