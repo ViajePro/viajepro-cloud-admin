@@ -64,11 +64,24 @@ export class FinanceController {
     const startDate = queryParams.startDate || '';
     const endDate = queryParams.endDate || new Date().toISOString().split('T')[0];
 
-    this.logger.debug('Procesando solicitud de reporte de ingresos', { startDate, endDate });
+    this.logger.debug('Procesando solicitud de reporte de ingresos', { 
+      startDate, 
+      endDate,
+      rawQueryParams: JSON.stringify(queryParams),
+      path: event.path,
+      method: event.httpMethod
+    });
 
     if (!startDate) {
       this.logger.warn('Falta fecha de inicio en la solicitud');
       return ResponseFormatter.error('Se requiere fecha de inicio (startDate)', 400);
+    }
+    
+    // Validar formato de fechas
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(startDate) || !dateRegex.test(endDate)) {
+      this.logger.warn('Formato de fecha inválido', { startDate, endDate });
+      return ResponseFormatter.error('Formato de fecha inválido. Use YYYY-MM-DD', 400);
     }
 
     const result = await this.getIncomeReportUseCase.execute(startDate, endDate);

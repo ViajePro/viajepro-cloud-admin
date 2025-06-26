@@ -15,8 +15,16 @@ export class GetIncomeReportUseCase {
       this.logger.info('Ejecutando caso de uso para obtener reporte de ingresos', { startDate, endDate });
       
       // Validar fechas
+      // Para compatibilidad con las pruebas, usamos fechas sin ajustar la hora
       const start = new Date(startDate);
       const end = new Date(endDate);
+      
+      this.logger.debug('Fechas convertidas', { 
+        startDateOriginal: startDate,
+        endDateOriginal: endDate,
+        startDateConverted: start.toISOString(),
+        endDateConverted: end.toISOString()
+      });
       
       if (isNaN(start.getTime()) || isNaN(end.getTime())) {
         this.logger.warn('Fechas inválidas proporcionadas', { startDate, endDate });

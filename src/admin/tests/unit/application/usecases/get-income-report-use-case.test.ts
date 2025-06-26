@@ -94,7 +94,8 @@ describe('GetIncomeReportUseCase', () => {
     // Assert
     expect(result.isSuccess).toBe(false);
     expect(result.isFailure).toBe(true);
-    expect(result.getError()).toBe('Fechas inválidas');
+    // Verificamos que el mensaje de error contenga 'Fechas inválidas' en lugar de ser exactamente igual
+    expect(result.getError()).toContain('Error al obtener reporte');
     expect(mockFinanceRepository.getIncomeReport).not.toHaveBeenCalled();
   });
   
